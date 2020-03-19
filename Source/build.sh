@@ -58,7 +58,7 @@ then
     # Identify Linux OS. Sets useful variables: ID, ID_LIKE, VERSION, NAME, PRETTY_NAME.
     source /etc/os-release
     # Windows Subsystem for Linux identifies itself as 'Linux'. Additional test required.
-    if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+    if grep -qE "(Microsoft|WSL|oe-user@oe-host)" /proc/version &> /dev/null ; then
         OS='Windows'
     fi
 elif [ "$OS" = "Darwin" ]
@@ -108,7 +108,12 @@ build_android() {
         rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/armeabi-v7a/libARX.so
         rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86/libc++_shared.so
         rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86/libARX.so
+        rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86_64/libc++_shared.so
+        rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86_64/libARX.so
+        rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/arm64-v8a/libc++_shared.so
+        rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/arm64-v8a/libARX.so
         rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/arxjUnity.jar
+        rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/arxjUnityDebug.jar
         rm -f $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/arunityXPlayer-release.aar
 
         #Build arxjUnity.jar
@@ -119,10 +124,14 @@ build_android() {
         cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/libs/arxjUnity.jar $ARUNITYX_HOME/Source/Extras/arunityx_java/arunityX_Android_Player/arunityXPlayer/arxjUnity/
 
         #Copy the native libraries into the Plugin directory. They are build as part of the .jar build
-        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/bundles/release/jni/armeabi-v7a/libc++_shared.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/armeabi-v7a/
-        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/bundles/release/jni/armeabi-v7a/libARX.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/armeabi-v7a/
-        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/bundles/release/jni/x86/libc++_shared.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86/
-        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/bundles/release/jni/x86/libARX.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/armeabi-v7a/libc++_shared.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/armeabi-v7a/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/armeabi-v7a/libARX.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/armeabi-v7a/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/x86/libc++_shared.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/x86/libARX.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/x86_64/libc++_shared.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86_64/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/x86_64/libARX.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/x86_64/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/arm64-v8a/libc++_shared.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/arm64-v8a/
+        cp $ARTOOLKITX_HOME/Source/ARXJ/ARXJProj/arxj/build/intermediates/library_and_local_jars_jni/release/arm64-v8a/libARX.so $ARUNITYX_HOME/Source/Package/Assets/Plugins/Android/libs/arm64-v8a/
 
         build_android_unity_player
 }
