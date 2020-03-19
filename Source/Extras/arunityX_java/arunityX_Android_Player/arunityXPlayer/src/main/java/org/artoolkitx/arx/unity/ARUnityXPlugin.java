@@ -79,4 +79,10 @@ interface ARUnityXPlugin {
 
     void logUnityMessage(String message);
 
+    String[] getAvailableResolutions(int index);
+
+    String getPreference(String key);
+
+    void setPreference(String key, String value);
+
 }

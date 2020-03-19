@@ -39,8 +39,11 @@ package org.artoolkitx.arx.unity;
 
 import android.util.Log;
 
+import com.unity3d.player.UnityPlayer;
+
 import org.artoolkitx.arx.arxj.ARController;
 import org.artoolkitx.arx.arxj.ARX_jni;
+import org.artoolkitx.arx.arxj.FPSCounter;
 import org.artoolkitx.arx.arxj.camera.CameraEventListener;
 
 import java.nio.ByteBuffer;
@@ -54,6 +57,8 @@ class CameraEventListenerUnityImpl implements CameraEventListener {
     private String pixelFormat;
     private int cameraIndex;
     private boolean cameraIsFrontFacing;
+
+    private FPSCounter fpsCounter = new FPSCounter();
 
     @Override
     public void cameraStreamStarted(int width, int height, String pixelFormat, int cameraIndex, boolean cameraIsFrontFacing) {
@@ -82,6 +87,7 @@ class CameraEventListenerUnityImpl implements CameraEventListener {
             }
         } else {
             ARController.getInstance().convert1(frame, frameSize);
+            frame();
         }
     }
 
@@ -95,6 +101,7 @@ class CameraEventListenerUnityImpl implements CameraEventListener {
             }
         } else {
             ARController.getInstance().convert(framePlanes, framePlanePixelStrides, framePlaneRowStrides);
+            frame();
         }
     }
 
@@ -103,5 +110,12 @@ class CameraEventListenerUnityImpl implements CameraEventListener {
         //ARToolKit is stopped from Unity
         //Only need to make sure AndroidVideoPushFinal is called
         ARController.getInstance().onlyFinal();
+    }
+
+    private void frame() {
+        if (fpsCounter.frame()) {
+            UnityPlayer.UnitySendMessage("ARToolKit", "OnFPSUpdated", fpsCounter.toString());
+        }
+
     }
 }

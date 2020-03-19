@@ -3,9 +3,13 @@ package org.artoolkitx.arx.unity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.hardware.Camera;
 import android.os.Build;
+import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +20,8 @@ import android.view.Surface;
 import com.unity3d.player.UnityPlayer;
 
 import org.artoolkitx.arx.arxj.camera.CameraPreferencesActivity;
+
+import java.util.List;
 
 
 /*
@@ -60,9 +66,12 @@ public final class ARUnityXPluginImpl implements ARUnityXPlugin {
     private final Activity mActivity;
     private boolean mUnityRunning = false;
 
+    private SharedPreferences sharedPreferences;
+
     public ARUnityXPluginImpl(Activity activity) {
         Log.i(TAG, "ARUnityXPluginImpl constructor called with Activity: " + activity);
         this.mActivity = activity;
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
     }
 
     @Override
@@ -100,5 +109,55 @@ public final class ARUnityXPluginImpl implements ARUnityXPlugin {
     public void logUnityMessage(String message) {
         Log.d(TAG,message);
     }
-    
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public String[] getAvailableResolutions(int index) {
+        Camera cam;
+        try {
+            cam = Camera.open(index);
+
+            Camera.Parameters params = cam.getParameters();
+            List<Camera.Size> previewSizes = params.getSupportedPreviewSizes();
+            cam.release();
+
+            // Build list of resolutions, checking whether the current
+            // resolution is in the list too.
+
+            String[] entries = new String[previewSizes.size()];
+
+            for (int i = 0; i < previewSizes.size(); i++) {
+                int w = previewSizes.get(i).width;
+                int h = previewSizes.get(i).height;
+                entries[i] = w + "x" + h;
+            }
+
+            return entries;
+
+        } catch (RuntimeException e) {
+            Log.e(TAG, "buildResolutionListForCameraIndex(): Camera failed to open: " + e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public String getPreference(String key) {
+        if (this.sharedPreferences != null) {
+            String val = this.sharedPreferences.getString(key, null);
+            Log.d(TAG, "getPreference " + key + " : " + val);
+            return val;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setPreference(String key, String value) {
+        if (this.sharedPreferences != null) {
+            Log.d(TAG, "setPreference " + key + " : " + value);
+            SharedPreferences.Editor editor = this.sharedPreferences.edit();
+            editor.putString(key, value);
+            editor.commit();
+        }
+    }
 }
