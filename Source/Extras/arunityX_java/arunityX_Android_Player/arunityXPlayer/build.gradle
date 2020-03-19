@@ -1,10 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,7 +38,7 @@ dependencies {
     compile(name: 'arxjUnity', ext: 'jar')
     //IMPORTANT: read the settings.gradle file before changing the below comment.
     //When using the setting below uncomment the compilation of arxUnity.jar!
-//    compile project(':arxj')
+    compile project(':arxj')
     //This version is needed because it is the latest stable for Unity3D
-    compile 'com.android.support:support-compat:27.0.2'
+    compile 'com.android.support:support-compat:28.0.0'
 }
